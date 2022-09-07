@@ -1,0 +1,27 @@
+{
+    "name": "token-swapper",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "deploy": "npx hardhat run  scripts/deploy.ts --network goerli"
+    },
+    "keywords": [],
+    "author": "Bloom Trade",
+    "license": "MIT",
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+        "@types/terminal-kit": "^2.5.0",
+        "hardhat": "^2.11.0",
+        "prettier": "^2.7.1",
+        "prettier-plugin-solidity": "^1.0.0-beta.24"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^4.7.3",
+        "@uniswap/v2-core": "^1.0.1",
+        "@uniswap/v2-periphery": "^1.1.0-beta.0",
+        "dotenv": "^16.0.2",
+        "terminal-kit": "^2.10.3"
+    }
+}
