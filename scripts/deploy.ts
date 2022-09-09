@@ -1,7 +1,7 @@
 import {ethers, network, run} from "hardhat";
 import {terminal} from "terminal-kit";
 async function main() {
-    const SwapFactory = await ethers.getContractFactory("Swapper");
+    const SwapFactory = await ethers.getContractFactory("BloomSwapper");
     const swap = await SwapFactory.deploy();
     const spinner = await terminal().spinner("dotSpinner");
     terminal().green(`  Deploying contract to ${network.name} 👨🏻‍🏭 \n`);
@@ -10,7 +10,10 @@ async function main() {
         `${swap.address} 🚀🚀 \n`
     );
     spinner.animate(false);
-    if (network.config.chainId === 5 && process.env.ETHERSCAN_API_KEY) {
+    if (
+        (network.config.chainId === 5 || network.config.chainId === 1) &&
+        process.env.ETHERSCAN_API_KEY
+    ) {
         let spinnerImpulse = await terminal().spinner("impulse");
         terminal().green(`  Waiting for blocks to be mined 🕑 \n`);
         await swap.deployTransaction.wait(5);

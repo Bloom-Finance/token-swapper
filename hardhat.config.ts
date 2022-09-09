@@ -11,6 +11,11 @@ const config: HardhatUserConfig = {
             accounts: [process.env.PRIVATE_KEY as string],
             chainId: 5,
         },
+        mainnet: {
+            url: process.env.RPC,
+            accounts: [process.env.PRIVATE_KEY as string],
+            chainId: 1,
+        },
     },
     etherscan: {
         apiKey: process.env.ETHERSCAN_API_KEY,
