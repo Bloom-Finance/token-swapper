@@ -36,6 +36,8 @@ async function verify(contractAddress: string, args: any[]) {
         }
     }
 }
+//TODO: Approve tokens task ...
+
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
