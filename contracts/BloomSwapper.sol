@@ -34,17 +34,34 @@ contract BloomSwapper {
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     Router private router = Router(UNISWAP_V2_ROUTER);
-    address private constant DAI = 0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844;
-    address private constant WETH = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
-    address private constant USDT = 0x509Ee0d083DdF8AC028f2a56731412edD63223B9;
-    address private constant USDC = 0x07865c6E87B9F70255377e024ace6630C1Eaa37F;
-    IERC20 private dai = IERC20(DAI);
-    IERC20 private weth = IERC20(WETH);
-    IERC20 private usdt = IERC20(USDT);
-    IERC20 private usdc = IERC20(USDC);
+    address private DAI;
+    address private WETH;
+    address private USDT;
+    address private USDC;
+    IERC20 private dai;
+    IERC20 private weth;
+    IERC20 private usdt;
+    IERC20 private usdc;
 
-    constructor() {
-        ///TODO: SET CONTRACTS ADDRESSES
+    constructor(
+        address _dai,
+        address _usdc,
+        address _usdt,
+        address _weth
+    ) {
+        dai = IERC20(_dai);
+        DAI = _dai;
+        weth = IERC20(_weth);
+        WETH = _weth;
+        usdt = IERC20(_usdt);
+        USDT = _usdt;
+        usdc = IERC20(_usdc);
+        USDC = _usdc;
+    }
+
+    modifier minimumAmount(uint256 amount) {
+        require(amount > 0, "Amount must be greater than 0");
+        _;
     }
 
     /** DAI CONTRACT FUNCTIONS */
@@ -56,10 +73,17 @@ contract BloomSwapper {
     // sendDAIToETHAddress(uint256 amount,address to)
     function sendDAIToETHAddress(uint256 amount, address ethAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        dai.transferFrom(msg.sender, address(this), amount);
-        dai.approve(address(router), amount);
+        require(
+            dai.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            dai.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](2);
         path[0] = DAI;
@@ -99,10 +123,17 @@ contract BloomSwapper {
     /// @return Amount of USDT received
     function sendDAIToUSDTAddress(uint256 amount, address usdtAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        dai.transferFrom(msg.sender, address(this), amount);
-        dai.approve(address(router), amount);
+        require(
+            dai.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            dai.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](3);
         path[0] = DAI;
@@ -124,10 +155,17 @@ contract BloomSwapper {
     /// @return Amount of USDC received
     function sendDAIToUSDCAddress(uint256 amount, address usdcAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        dai.transferFrom(msg.sender, address(this), amount);
-        dai.approve(address(router), amount);
+        require(
+            dai.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            dai.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](2);
         path[0] = DAI;
@@ -152,6 +190,7 @@ contract BloomSwapper {
     function sendETHToUSDTAddress(address usdtAddress)
         external
         payable
+        minimumAmount(msg.value)
         returns (uint256)
     {
         address[] memory path;
@@ -170,10 +209,17 @@ contract BloomSwapper {
     /// @return Amount of ETH received
     function sendUSDTToEthAddress(uint256 amount, address ethAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        usdt.transferFrom(msg.sender, address(this), amount);
-        usdt.approve(address(router), amount);
+        require(
+            usdt.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            usdt.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](2);
         path[0] = USDT;
@@ -194,10 +240,17 @@ contract BloomSwapper {
     /// @return Amount of DAI received
     function sendUSDToDAIAddress(uint256 amount, address daiAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        usdt.transferFrom(msg.sender, address(this), amount);
-        usdt.approve(address(router), amount);
+        require(
+            usdt.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            usdt.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](3);
         path[0] = USDT;
@@ -219,10 +272,17 @@ contract BloomSwapper {
     /// @return Amount of USDC received
     function sendUSDToUSDCAddress(uint256 amount, address usdcAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        usdt.transferFrom(msg.sender, address(this), amount);
-        usdt.approve(address(router), amount);
+        require(
+            usdt.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            usdt.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](3);
         path[0] = USDT;
@@ -247,6 +307,7 @@ contract BloomSwapper {
     function sendETHToUSDCAddress(address usdcAddress)
         external
         payable
+        minimumAmount(msg.value)
         returns (uint256)
     {
         address[] memory path;
@@ -265,10 +326,17 @@ contract BloomSwapper {
     /// @return Amount of ETH received
     function sendUSDCToETHAddress(uint256 amount, address ethAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        usdc.transferFrom(msg.sender, address(this), amount);
-        usdc.approve(address(router), amount);
+        require(
+            usdc.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            usdc.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](2);
         path[0] = USDC;
@@ -289,10 +357,17 @@ contract BloomSwapper {
     /// @return Amount of DAI received
     function sendUSDCToDAIAddress(uint256 amount, address daiAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        usdc.transferFrom(msg.sender, address(this), amount);
-        usdc.approve(address(router), amount);
+        require(
+            usdc.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            usdc.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](3);
         path[0] = USDC;
@@ -314,10 +389,17 @@ contract BloomSwapper {
     /// @return Amount of USDT received
     function sendUSDCToUSDTAddress(uint256 amount, address usdtAddress)
         external
+        minimumAmount(amount)
         returns (uint256)
     {
-        usdc.transferFrom(msg.sender, address(this), amount);
-        usdc.approve(address(router), amount);
+        require(
+            usdc.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        require(
+            usdc.approve(UNISWAP_V2_ROUTER, amount),
+            "Approval failed: Try approving the contract  token"
+        );
         address[] memory path;
         path = new address[](3);
         path[0] = USDC;

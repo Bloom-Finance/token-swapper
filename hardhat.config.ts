@@ -1,4 +1,5 @@
 import {HardhatUserConfig} from "hardhat/config";
+import "hardhat-gas-reporter";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-etherscan";
 import * as dotenv from "dotenv";
@@ -19,6 +20,14 @@ const config: HardhatUserConfig = {
     },
     etherscan: {
         apiKey: process.env.ETHERSCAN_API_KEY,
+    },
+    gasReporter: {
+        enabled: true,
+        coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+        outputFile: "gas-report.txt",
+        currency: "USD",
+        token: "ETH",
+        noColors: true,
     },
 };
 
