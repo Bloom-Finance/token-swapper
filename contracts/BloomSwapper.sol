@@ -2,6 +2,10 @@
 pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+contract BloomTreasure {
+    function calculateFee(uint256 amount) public view returns (uint256) {}
+}
+
 contract Router {
     function swapExactTokensForTokens(
         uint256 amountIn,
@@ -88,6 +92,7 @@ contract BloomSwapper {
         path = new address[](2);
         path[0] = DAI;
         path[1] = router.WETH();
+
         uint256[] memory amounts = router.swapExactTokensForETH(
             amount,
             0,

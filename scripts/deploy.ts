@@ -7,7 +7,7 @@ async function main() {
     );
     const swap = await SwapFactory.deploy(_dai, _usdc, _usdt, _weth);
     const spinner = await terminal().spinner("dotSpinner");
-    terminal().green(`  Deploying contract to ${network.name} 👨🏻‍🏭 \n`);
+    terminal().green(`  Deploying contract to ${network.name}  \n`);
     await swap.deployed();
     terminal("Your contract was deployed to: ").green.bold(
         `${swap.address} 🚀🚀 \n`
@@ -22,7 +22,7 @@ async function main() {
         await swap.deployTransaction.wait(5);
         spinnerImpulse.animate(false);
         let dotSpinner = await terminal().spinner("dotSpinner");
-        terminal().brightBlue(`  Verifying contract on Etherscan 🕵🏻‍♂️ \n`);
+        terminal().brightBlue(`  Verifying contract on Etherscan  \n`);
         await verify(swap.address, [_dai, _usdc, _usdt, _weth]);
         dotSpinner.animate(false);
         terminal().yellow(
