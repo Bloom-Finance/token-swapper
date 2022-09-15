@@ -42,13 +42,14 @@ All testing is done using [Goerli Testnet](https://goerli.etherscan.io/)
 
 ```shell
 npx hardhat compile
-npm run deploy
+npm run deploy:goerli
 ```
 
 ### Environment variables 📝
 
-| Item              |                         Value |
-| ----------------- | ----------------------------: |
-| RPC               |   Add your alchemy RPC server |
-| ETHERSCAN_API_KEY | API Key provided by etherscan |
-| PRIVATE_KEY       |       Your wallet private key |
+| Item                  |                           Value |
+| --------------------- | ------------------------------: |
+| RPC                   |     Add your alchemy RPC server |
+| ETHERSCAN_API_KEY     |   API Key provided by etherscan |
+| PRIVATE_KEY           |         Your wallet private key |
+| COINMARKETCAP_API_KEY | In case you want the gas-report |

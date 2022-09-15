@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 contract BloomTreasure {
     uint256 private balance;
     address[] private owners;
-    uint256 private percentage;
+    uint256 private percentage = 10000000000000000;
     mapping(address => uint256) private payersFees;
 
     constructor(address[] memory _owners) {
@@ -13,11 +13,11 @@ contract BloomTreasure {
     }
 
     function calculateFee(uint256 amount) public view returns (uint256) {
-        return (amount * percentage) / 100;
+        return (amount * percentage) / 100000000000000000000;
     }
 
-    function fundTreasure() public payable {
-        payersFees[msg.sender] += msg.value;
+    function fundTreasure(address sender) public payable {
+        payersFees[sender] += msg.value;
         balance += msg.value;
     }
 

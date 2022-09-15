@@ -1,16 +1,30 @@
 import {ethers, network, run} from "hardhat";
 import {terminal} from "terminal-kit";
 async function main() {
-    const SwapFactory = await ethers.getContractFactory("BloomSwapper");
+    const _owners = ["0xF274800E82717D38d2e2ffe18A4C6489a50C5Add"];
+    const spinner = await terminal().spinner("dotSpinner");
+    terminal().green(`  Deploying  contracts to ${network.name}  \n`);
+    //send array of owners
+    const TreasureFactory = await ethers.getContractFactory("BloomTreasure");
+    const treasure = await TreasureFactory.deploy(_owners);
+    treasure.deployTransaction.wait();
     const {_dai, _usdc, _usdt, _weth} = getContractAddresses(
         network.config.chainId as any
     );
-    const swap = await SwapFactory.deploy(_dai, _usdc, _usdt, _weth);
-    const spinner = await terminal().spinner("dotSpinner");
-    terminal().green(`  Deploying contract to ${network.name}  \n`);
+    const SwapFactory = await ethers.getContractFactory("BloomSwapper");
+    const swap = await SwapFactory.deploy(
+        _dai,
+        _usdc,
+        _usdt,
+        _weth,
+        treasure.address
+    );
     await swap.deployed();
-    terminal("Your contract was deployed to: ").green.bold(
+    terminal("Swapper contract was deployed to: ").green.bold(
         `${swap.address} 🚀🚀 \n`
+    );
+    terminal("Treasure contract was deployed to: ").green.bold(
+        `${treasure.address} 🚀🚀 \n`
     );
     spinner.animate(false);
     if (
@@ -22,11 +36,21 @@ async function main() {
         await swap.deployTransaction.wait(5);
         spinnerImpulse.animate(false);
         let dotSpinner = await terminal().spinner("dotSpinner");
-        terminal().brightBlue(`  Verifying contract on Etherscan  \n`);
-        await verify(swap.address, [_dai, _usdc, _usdt, _weth]);
+        terminal().brightBlue(`  Verifying  contracts on Etherscan  \n`);
+        await verify(swap.address, [
+            _dai,
+            _usdc,
+            _usdt,
+            _weth,
+            treasure.address,
+        ]);
+        await verify(treasure.address, [_owners]);
         dotSpinner.animate(false);
         terminal().yellow(
-            `Contract verified on Etherscan 🎉🎉. See it here: ${`https://goerli.etherscan.io/address/${swap.address}#code`}\n`
+            `Swapper contract verified on Etherscan 🎉🎉. See it here: ${`https://goerli.etherscan.io/address/${swap.address}#code`}\n`
+        );
+        terminal().yellow(
+            `Treasure contract verified on Etherscan 🎉🎉. See it here: ${`https://goerli.etherscan.io/address/${treasure.address}#code`}\n`
         );
     }
 }

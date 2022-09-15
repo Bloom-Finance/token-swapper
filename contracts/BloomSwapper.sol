@@ -2,8 +2,10 @@
 pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract BloomTreasure {
+contract Treasure {
     function calculateFee(uint256 amount) public view returns (uint256) {}
+
+    function fundTreasure(address sender) public payable {}
 }
 
 contract Router {
@@ -38,6 +40,8 @@ contract BloomSwapper {
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     Router private router = Router(UNISWAP_V2_ROUTER);
+    Treasure private treasure;
+    address private TREASURE;
     address private DAI;
     address private WETH;
     address private USDT;
@@ -51,7 +55,8 @@ contract BloomSwapper {
         address _dai,
         address _usdc,
         address _usdt,
-        address _weth
+        address _weth,
+        address _treasure
     ) {
         dai = IERC20(_dai);
         DAI = _dai;
@@ -61,11 +66,17 @@ contract BloomSwapper {
         USDT = _usdt;
         usdc = IERC20(_usdc);
         USDC = _usdc;
+        treasure = Treasure(_treasure);
+        TREASURE = _treasure;
     }
 
     modifier minimumAmount(uint256 amount) {
         require(amount > 0, "Amount must be greater than 0");
         _;
+    }
+
+    function getTreasureAddress() public view returns (address) {
+        return TREASURE;
     }
 
     /** DAI CONTRACT FUNCTIONS */
@@ -100,6 +111,8 @@ contract BloomSwapper {
             ethAddress,
             block.timestamp
         );
+        uint256 fee = treasure.calculateFee(amounts[1]);
+        treasure.fundTreasure{value: fee}(msg.sender);
         return amounts[1];
     }
 
