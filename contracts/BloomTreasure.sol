@@ -16,7 +16,7 @@ contract BloomTreasure {
         return (amount * percentage) / 100000000000000000000;
     }
 
-    function fundTreasure(address sender) public payable {
+    function fundTreasure(address sender) external payable {
         payersFees[sender] += msg.value;
         balance += msg.value;
     }
