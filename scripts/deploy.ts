@@ -4,13 +4,14 @@ async function main() {
     const _owners = ["0xF274800E82717D38d2e2ffe18A4C6489a50C5Add"];
     const spinner = await terminal().spinner("dotSpinner");
     terminal().green(`  Deploying  contracts to ${network.name}  \n`);
-    //send array of owners
-    const TreasureFactory = await ethers.getContractFactory("BloomTreasure");
-    const treasure = await TreasureFactory.deploy(_owners);
-    treasure.deployTransaction.wait();
+
     const {_dai, _usdc, _usdt, _weth} = getContractAddresses(
         network.config.chainId as any
     );
+    //send array of owners
+    const TreasureFactory = await ethers.getContractFactory("BloomTreasure");
+    const treasure = await TreasureFactory.deploy(_owners, _dai, _usdc, _usdt);
+    treasure.deployTransaction.wait();
     const SwapFactory = await ethers.getContractFactory("BloomSwapper");
     const swap = await SwapFactory.deploy(
         _dai,
@@ -44,7 +45,7 @@ async function main() {
             _weth,
             treasure.address,
         ]);
-        await verify(treasure.address, [_owners]);
+        await verify(treasure.address, [_owners, _dai, _usdc, _usdt]);
         dotSpinner.animate(false);
         terminal().yellow(
             `Swapper contract verified on Etherscan 🎉🎉. See it here: ${`https://goerli.etherscan.io/address/${swap.address}#code`}\n`
