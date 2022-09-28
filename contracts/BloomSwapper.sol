@@ -60,9 +60,8 @@ contract BloomSwapper {
         TREASURE = _treasure;
     }
 
-    modifier minimumAmount(uint256 amount) {
+    function minimumAmount(uint256 amount) private pure {
         require(amount > 0, "Amount must be greater than 0");
-        _;
     }
 
     function getTreasureAddress() public view returns (address) {
@@ -87,10 +86,8 @@ contract BloomSwapper {
     /// @notice Sends DAI to another address
     /// @param to The address to send DAI to
     /// @param amount Amount to send
-    function sendDAIToAddress(address to, uint256 amount)
-        public
-        minimumAmount(amount)
-    {
+    function sendDAIToAddress(address to, uint256 amount) public {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -107,9 +104,9 @@ contract BloomSwapper {
     /// @return Amount of eths sent
     function sendDAIToETHAddress(uint256 amount, address ethAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -167,9 +164,9 @@ contract BloomSwapper {
     /// @return Amount of USDT received
     function sendDAIToUSDTAddress(uint256 amount, address usdtAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -202,9 +199,9 @@ contract BloomSwapper {
     /// @return Amount of USDC received
     function sendDAIToUSDCAddress(uint256 amount, address usdcAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -235,10 +232,8 @@ contract BloomSwapper {
     /// @notice Sends USDC to another address
     /// @param to The address to send USDC to
     /// @param amount Amount to send
-    function sendUSDTTOAddress(address to, uint256 amount)
-        public
-        minimumAmount(amount)
-    {
+    function sendUSDTTOAddress(address to, uint256 amount) public {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -256,9 +251,9 @@ contract BloomSwapper {
     function sendETHToUSDTAddress(address usdtAddress)
         external
         payable
-        minimumAmount(msg.value)
         returns (uint256)
     {
+        minimumAmount(msg.value);
         address[] memory path;
         path = new address[](2);
         path[0] = router.WETH();
@@ -281,9 +276,9 @@ contract BloomSwapper {
     /// @return Amount of ETH received
     function sendUSDTToETHAddress(uint256 amount, address ethAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -316,9 +311,9 @@ contract BloomSwapper {
     /// @return Amount of DAI received
     function sendUSDToDAIAddress(uint256 amount, address daiAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -351,9 +346,9 @@ contract BloomSwapper {
     /// @return Amount of USDC received
     function sendUSDTToUSDCAddress(uint256 amount, address usdcAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -384,10 +379,8 @@ contract BloomSwapper {
     /// @notice Sends USDC to another address
     /// @param to The address to send USDC to
     /// @param amount Amount to send
-    function sendUSDCToAddress(address to, uint256 amount)
-        public
-        minimumAmount(amount)
-    {
+    function sendUSDCToAddress(address to, uint256 amount) public {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -405,9 +398,9 @@ contract BloomSwapper {
     function sendETHToUSDCAddress(address usdcAddress)
         external
         payable
-        minimumAmount(msg.value)
         returns (uint256)
     {
+        minimumAmount(msg.value);
         address[] memory path;
         path = new address[](2);
         path[0] = router.WETH();
@@ -427,9 +420,9 @@ contract BloomSwapper {
     /// @return Amount of ETH received
     function sendUSDCToETHAddress(uint256 amount, address ethAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -462,9 +455,9 @@ contract BloomSwapper {
     /// @return Amount of DAI received
     function sendUSDCToDAIAddress(uint256 amount, address daiAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
@@ -497,9 +490,9 @@ contract BloomSwapper {
     /// @return Amount of USDT received
     function sendUSDCToUSDTAddress(uint256 amount, address usdtAddress)
         external
-        minimumAmount(amount)
         returns (uint256)
     {
+        minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
         uint256 newAmount = amount - fee;
         require(
