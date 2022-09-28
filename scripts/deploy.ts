@@ -60,7 +60,7 @@ function getContractAddresses(chainId: 1 | 5) {
         return {
             _dai: "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844",
             _usdc: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
-            _usdt: "0x509Ee0d083DdF8AC028f2a56731412edD63223B9",
+            _usdt: "0x2DB274b9E5946855B83e9Eac5aA6Dcf2c68a95F3",
         };
     }
     if (chainId === 1) {
