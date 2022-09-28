@@ -11,7 +11,6 @@ contract BloomTreasure {
     IERC20 private usdt;
     struct Token {
         uint256 balance;
-        address[] payers;
     }
     struct Treasure {
         Token eth;
@@ -73,49 +72,14 @@ contract BloomTreasure {
         return (amount * percentage) / 10000;
     }
 
-    function fundTreasureWithETH(address sender) external payable {
+    function fundTreasureWithETH() external payable {
         treasure.eth.balance += msg.value;
-        treasure.eth.payers.push(sender);
     }
 
-    function fundTreasureWithToken(
-        string memory token,
-        uint256 amount,
-        address funder
-    ) public {
-        if (compareStrings(token, "DAI")) {
-            require(
-                dai.transferFrom(funder, address(this), amount),
-                "Fee payment failed"
-            );
-            require(dai.approve(address(this), amount), "DAI approval failed");
-            treasure.dai.balance += amount;
-            treasure.dai.payers.push(msg.sender);
-        }
-        if (compareStrings(token, "USDC")) {
-            require(
-                usdc.transferFrom(funder, address(this), amount),
-                "Fee payment failed"
-            );
-            require(
-                usdc.approve(address(this), amount),
-                "USDC approval failed"
-            );
-            treasure.usdc.balance += amount;
-            treasure.usdc.payers.push(msg.sender);
-        }
-        if (compareStrings(token, "USDT")) {
-            require(
-                usdt.transferFrom(funder, address(this), amount),
-                "Fee payment failed"
-            );
-            require(
-                usdt.approve(address(this), amount),
-                "USDT approval failed"
-            );
-            treasure.usdt.balance += amount;
-            treasure.usdt.payers.push(msg.sender);
-        }
+    function updateInternalBalanceOfTokens() public {
+        treasure.dai.balance = dai.balanceOf(address(this));
+        treasure.usdc.balance = usdc.balanceOf(address(this));
+        treasure.usdt.balance = usdt.balanceOf(address(this));
     }
 
     function getPublicBalanceOfETH() public view returns (uint256) {
@@ -150,46 +114,34 @@ contract BloomTreasure {
         }
         if (compareStrings(tokenToRetrieve, "DAI")) {
             require(
-                amountToRetrieve < treasure.dai.balance,
+                amountToRetrieve <= treasure.dai.balance,
                 "Not enough DAI in the treasure"
             );
             require(
-                dai.transferFrom(address(this), msg.sender, amountToRetrieve),
+                dai.transfer(msg.sender, amountToRetrieve),
                 "DAI transfer failed"
-            );
-            require(
-                dai.approve(address(this), amountToRetrieve),
-                "DAI approve failed"
             );
             treasure.dai.balance -= amountToRetrieve;
         }
         if (compareStrings(tokenToRetrieve, "USDC")) {
             require(
-                amountToRetrieve < treasure.usdc.balance,
+                amountToRetrieve <= treasure.usdc.balance,
                 "Not enough USDC in the treasure"
             );
             require(
-                usdc.transferFrom(address(this), msg.sender, amountToRetrieve),
+                usdc.transfer(msg.sender, amountToRetrieve),
                 "USDC transfer failed"
-            );
-            require(
-                usdc.approve(address(this), amountToRetrieve),
-                "USDC approve failed"
             );
             treasure.usdc.balance -= amountToRetrieve;
         }
         if (compareStrings(tokenToRetrieve, "USDT")) {
             require(
-                amountToRetrieve < treasure.usdt.balance,
+                amountToRetrieve <= treasure.usdt.balance,
                 "Not enough USDT in the treasure"
             );
             require(
-                usdt.transferFrom(address(this), msg.sender, amountToRetrieve),
+                usdt.transfer(msg.sender, amountToRetrieve),
                 "USDT transfer failed"
-            );
-            require(
-                usdt.approve(address(this), amountToRetrieve),
-                "USDT approve failed"
             );
             treasure.usdt.balance -= amountToRetrieve;
         }

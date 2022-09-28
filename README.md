@@ -20,8 +20,8 @@ All testing is done using [Goerli Testnet](https://goerli.etherscan.io/)
 | Tokens |                                  Addresses |
 | ------ | -----------------------------------------: |
 | DAI    | 0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844 |
-| USDT   | 0x509Ee0d083DdF8AC028f2a56731412edD63223B9 |
-| USDC   | 0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557 |
+| USDT   | 0x2DB274b9E5946855B83e9Eac5aA6Dcf2c68a95F3 |
+| USDC   | 0x07865c6E87B9F70255377e024ace6630C1Eaa37F |
 | WETH   | 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 |
 
 ### Contract addresses for ERC20 Mainnet

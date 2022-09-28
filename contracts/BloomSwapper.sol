@@ -32,18 +32,15 @@ contract Router {
 
 // Author: @alexFiorenza
 contract BloomSwapper {
-    event Log(string message);
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     Router private router = Router(UNISWAP_V2_ROUTER);
     BloomTreasure private treasure;
     address private TREASURE;
     address private DAI;
-    address private WETH;
     address private USDT;
     address private USDC;
     IERC20 private dai;
-    IERC20 private weth;
     IERC20 private usdt;
     IERC20 private usdc;
 
@@ -51,13 +48,10 @@ contract BloomSwapper {
         address _dai,
         address _usdc,
         address _usdt,
-        address _weth,
         address _treasure
     ) {
         dai = IERC20(_dai);
         DAI = _dai;
-        weth = IERC20(_weth);
-        WETH = _weth;
         usdt = IERC20(_usdt);
         USDT = _usdt;
         usdc = IERC20(_usdc);
@@ -75,6 +69,19 @@ contract BloomSwapper {
         return TREASURE;
     }
 
+    /// @notice Sends ETHS to another address
+    /// @param to The address to send ETHS to
+    function sendETHToAddress(address to) external payable {
+        uint256 fee = treasure.calculateFee(msg.value);
+        require(
+            address(this).balance > fee,
+            "Fee is greater than the amount sent"
+        );
+        treasure.fundTreasureWithETH{value: fee}();
+        uint256 newAmount = msg.value - fee;
+        payable(to).transfer(newAmount);
+    }
+
     /** DAI CONTRACT FUNCTIONS */
 
     /// @notice Sends DAI to another address
@@ -85,9 +92,13 @@ contract BloomSwapper {
         minimumAmount(amount)
     {
         uint256 fee = treasure.calculateFee(amount);
-        require(dai.transferFrom(msg.sender, to, amount), "Transfer failed");
-        treasure.fundTreasureWithToken("DAI", fee, msg.sender);
-        require(dai.approve(address(this), amount), "Approve failed");
+        uint256 newAmount = amount - fee;
+        require(
+            dai.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        dai.transfer(to, newAmount);
+        fundTreasureWithToken("DAI", fee);
     }
 
     /// @notice Swaps DAI for ETH
@@ -99,12 +110,13 @@ contract BloomSwapper {
         minimumAmount(amount)
         returns (uint256)
     {
+        uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             dai.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        uint256 fee = treasure.calculateFee(amount);
-        treasure.fundTreasureWithToken("DAI", fee, msg.sender);
+        fundTreasureWithToken("DAI", fee);
         require(
             dai.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -115,7 +127,7 @@ contract BloomSwapper {
         path[1] = router.WETH();
 
         uint256[] memory amounts = router.swapExactTokensForETH(
-            amount,
+            newAmount,
             0,
             path,
             ethAddress,
@@ -142,7 +154,7 @@ contract BloomSwapper {
             address(this).balance > fee,
             "Fee is greater than the amount sent"
         );
-        treasure.fundTreasureWithETH{value: fee}(msg.sender);
+        treasure.fundTreasureWithETH{value: fee}();
         uint256[] memory amounts = router.swapExactETHForTokens{
             value: msg.value - fee
         }(0, path, daiAddress, block.timestamp);
@@ -159,14 +171,12 @@ contract BloomSwapper {
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             dai.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            dai.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("DAI", fee);
         require(
             dai.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -174,16 +184,16 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](3);
         path[0] = DAI;
-        path[1] = WETH;
+        path[1] = router.WETH();
         path[2] = USDT;
         uint256[] memory amounts = router.swapExactTokensForTokens(
-            amount,
+            newAmount,
             0,
             path,
             usdtAddress,
             block.timestamp
         );
-        return amounts[1];
+        return amounts[2];
     }
 
     /// @notice Swaps DAI for USDC
@@ -196,25 +206,23 @@ contract BloomSwapper {
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             dai.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            dai.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("DAI", fee);
         require(
             dai.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
         );
         address[] memory path;
-        path = new address[](2);
+        path = new address[](3);
         path[0] = DAI;
-        path[1] = WETH;
+        path[1] = router.WETH();
         path[2] = USDC;
         uint256[] memory amounts = router.swapExactTokensForTokens(
-            amount,
+            newAmount,
             0,
             path,
             usdcAddress,
@@ -224,6 +232,22 @@ contract BloomSwapper {
     }
 
     /** TETHER USDT CONTRACT FUNCTIONS */
+    /// @notice Sends USDC to another address
+    /// @param to The address to send USDC to
+    /// @param amount Amount to send
+    function sendUSDTTOAddress(address to, uint256 amount)
+        public
+        minimumAmount(amount)
+    {
+        uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
+        require(
+            usdt.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        usdt.transfer(to, newAmount);
+        fundTreasureWithToken("USDT", fee);
+    }
 
     /// @notice Swaps ETH for USDT
     /// @param usdtAddress USDT address to be sent the money
@@ -238,16 +262,15 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](2);
         path[0] = router.WETH();
-        path[1] = USDT;
+        path[1] = DAI;
         uint256 fee = treasure.calculateFee(msg.value);
         require(
             address(this).balance > fee,
             "Fee is greater than the amount sent"
         );
-        treasure.fundTreasureWithETH{value: fee}(msg.sender);
-        uint256 amountToSwap = msg.value - fee;
+        treasure.fundTreasureWithETH{value: fee}();
         uint256[] memory amounts = router.swapExactETHForTokens{
-            value: amountToSwap
+            value: msg.value - fee
         }(0, path, usdtAddress, block.timestamp);
         return amounts[1];
     }
@@ -256,20 +279,18 @@ contract BloomSwapper {
     /// @param ethAddress ETH address to be sent the money
     /// @param amount Amount of USDT to swap
     /// @return Amount of ETH received
-    function sendUSDTToEthAddress(uint256 amount, address ethAddress)
+    function sendUSDTToETHAddress(uint256 amount, address ethAddress)
         external
         minimumAmount(amount)
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             usdt.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            usdt.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("USDT", fee);
         require(
             usdt.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -278,8 +299,9 @@ contract BloomSwapper {
         path = new address[](2);
         path[0] = USDT;
         path[1] = router.WETH();
+
         uint256[] memory amounts = router.swapExactTokensForETH(
-            amount,
+            newAmount,
             0,
             path,
             ethAddress,
@@ -298,14 +320,12 @@ contract BloomSwapper {
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             usdt.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            usdt.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("USDT", fee);
         require(
             usdt.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -313,36 +333,34 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](3);
         path[0] = USDT;
-        path[1] = WETH;
+        path[1] = router.WETH();
         path[2] = DAI;
         uint256[] memory amounts = router.swapExactTokensForTokens(
-            amount,
+            newAmount,
             0,
             path,
             daiAddress,
             block.timestamp
         );
-        return amounts[1];
+        return amounts[2];
     }
 
     /// @notice Swaps USDT for USDC
     /// @param amount Amount of USDT to swap
     /// @param usdcAddress USDC address to be sent the money
     /// @return Amount of USDC received
-    function sendUSDToUSDCAddress(uint256 amount, address usdcAddress)
+    function sendUSDTToUSDCAddress(uint256 amount, address usdcAddress)
         external
         minimumAmount(amount)
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             usdt.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            usdt.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("USDT", fee);
         require(
             usdt.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -350,19 +368,35 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](3);
         path[0] = USDT;
-        path[1] = WETH;
+        path[1] = router.WETH();
         path[2] = USDC;
         uint256[] memory amounts = router.swapExactTokensForTokens(
-            amount,
+            newAmount,
             0,
             path,
             usdcAddress,
             block.timestamp
         );
-        return amounts[1];
+        return amounts[2];
     }
 
     /** USDC COIN CONTRACT FUNCTIONS */
+    /// @notice Sends USDC to another address
+    /// @param to The address to send USDC to
+    /// @param amount Amount to send
+    function sendUSDCToAddress(address to, uint256 amount)
+        public
+        minimumAmount(amount)
+    {
+        uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
+        require(
+            usdc.transferFrom(msg.sender, address(this), amount),
+            "Transfer failed"
+        );
+        usdc.transfer(to, newAmount);
+        fundTreasureWithToken("USDC", fee);
+    }
 
     /// @notice Swaps ETH for USDC
     /// @return Amount of USDC received
@@ -380,7 +414,7 @@ contract BloomSwapper {
         path[1] = USDC;
         uint256 fee = treasure.calculateFee(msg.value);
         uint256 amountToSwap = msg.value - fee;
-        treasure.fundTreasureWithETH{value: fee}(msg.sender);
+        treasure.fundTreasureWithETH{value: fee}();
         uint256[] memory amounts = router.swapExactETHForTokens{
             value: amountToSwap
         }(0, path, usdcAddress, block.timestamp);
@@ -397,14 +431,12 @@ contract BloomSwapper {
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             usdc.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            usdc.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("USDC", fee);
         require(
             usdc.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -413,8 +445,9 @@ contract BloomSwapper {
         path = new address[](2);
         path[0] = USDC;
         path[1] = router.WETH();
+
         uint256[] memory amounts = router.swapExactTokensForETH(
-            amount,
+            newAmount,
             0,
             path,
             ethAddress,
@@ -433,14 +466,12 @@ contract BloomSwapper {
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             usdc.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            usdc.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("USDC", fee);
         require(
             usdc.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -448,16 +479,16 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](3);
         path[0] = USDC;
-        path[1] = WETH;
+        path[1] = router.WETH();
         path[2] = DAI;
         uint256[] memory amounts = router.swapExactTokensForTokens(
-            amount,
+            newAmount,
             0,
             path,
             daiAddress,
             block.timestamp
         );
-        return amounts[1];
+        return amounts[2];
     }
 
     /// @notice Swaps USDC for USDT
@@ -470,14 +501,12 @@ contract BloomSwapper {
         returns (uint256)
     {
         uint256 fee = treasure.calculateFee(amount);
+        uint256 newAmount = amount - fee;
         require(
             usdc.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        require(
-            usdc.transferFrom(msg.sender, TREASURE, fee),
-            "Fee transfer failed"
-        );
+        fundTreasureWithToken("USDC", fee);
         require(
             usdc.approve(UNISWAP_V2_ROUTER, amount),
             "Approval failed: Try approving the contract  token"
@@ -485,15 +514,39 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](3);
         path[0] = USDC;
-        path[1] = WETH;
+        path[1] = router.WETH();
         path[2] = USDT;
         uint256[] memory amounts = router.swapExactTokensForTokens(
-            amount,
+            newAmount,
             0,
             path,
             usdtAddress,
             block.timestamp
         );
-        return amounts[1];
+        return amounts[2];
+    }
+
+    function fundTreasureWithToken(string memory token, uint256 amount)
+        private
+    {
+        if (compareStrings(token, "DAI")) {
+            require(dai.transfer(TREASURE, amount), "Fee payment failed");
+        }
+        if (compareStrings(token, "USDC")) {
+            require(usdc.transfer(TREASURE, amount), "Fee payment failed");
+        }
+        if (compareStrings(token, "USDT")) {
+            require(usdt.transfer(TREASURE, amount), "Fee payment failed");
+        }
+        treasure.updateInternalBalanceOfTokens();
+    }
+
+    function compareStrings(string memory a, string memory b)
+        internal
+        pure
+        returns (bool)
+    {
+        return (keccak256(abi.encodePacked((a))) ==
+            keccak256(abi.encodePacked((b))));
     }
 }
