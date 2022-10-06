@@ -36,10 +36,14 @@ async function main() {
         await verify(treasure.address, [_owners, _dai, _usdc, _usdt]);
         dotSpinner.animate(false);
         terminal().yellow(
-            `Swapper contract verified on Etherscan 🎉🎉. See it here: ${`https://goerli.etherscan.io/address/${swap.address}#code`}\n`
+            `Swapper contract verified on Etherscan 🎉🎉. See it here: ${`https://${
+                network.config.chainId === 5 ? "goerli." : ""
+            }etherscan.io/address/${swap.address}#code`}\n`
         );
         terminal().yellow(
-            `Treasure contract verified on Etherscan 🎉🎉. See it here: ${`https://goerli.etherscan.io/address/${treasure.address}#code`}\n`
+            `Treasure contract verified on Etherscan 🎉🎉. See it here: ${`https://${
+                network.config.chainId === 5 ? "goerli." : ""
+            }etherscan.io/address/${treasure.address}#code`}\n`
         );
     }
 }

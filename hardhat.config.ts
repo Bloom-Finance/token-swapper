@@ -8,12 +8,12 @@ const config: HardhatUserConfig = {
     solidity: "0.8.9",
     networks: {
         goerli: {
-            url: process.env.RPC,
+            url: process.env.RPC_GOERLI,
             accounts: [process.env.PRIVATE_KEY as string],
             chainId: 5,
         },
         mainnet: {
-            url: process.env.RPC,
+            url: process.env.RPC_MAINNET,
             accounts: [process.env.PRIVATE_KEY as string],
             chainId: 1,
         },
