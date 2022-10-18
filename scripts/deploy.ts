@@ -1,4 +1,4 @@
-import {network, run} from "hardhat";
+import {ethers, network, run} from "hardhat";
 import {terminal} from "terminal-kit";
 async function main() {
     const _owners = ["0xF274800E82717D38d2e2ffe18A4C6489a50C5Add"];
