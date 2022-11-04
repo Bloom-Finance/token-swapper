@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity 0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./BloomTreasure.sol";
 
@@ -68,41 +68,13 @@ contract BloomSwapper {
         return TREASURE;
     }
 
-    /// @notice Sends ETHS to another address
-    /// @param to The address to send ETHS to
-    function sendETHToAddress(address to) external payable {
-        uint256 fee = treasure.calculateFee(msg.value);
-        require(
-            address(this).balance > fee,
-            "Fee is greater than the amount sent"
-        );
-        treasure.fundTreasureWithETH{value: fee}();
-        uint256 newAmount = msg.value - fee;
-        payable(to).transfer(newAmount);
-    }
-
     /** DAI CONTRACT FUNCTIONS */
 
-    /// @notice Sends DAI to another address
-    /// @param to The address to send DAI to
-    /// @param amount Amount to send
-    function sendDAIToAddress(address to, uint256 amount) public {
-        minimumAmount(amount);
-        uint256 fee = treasure.calculateFee(amount);
-        uint256 newAmount = amount - fee;
-        require(
-            dai.transferFrom(msg.sender, address(this), amount),
-            "Transfer failed"
-        );
-        dai.transfer(to, newAmount);
-        fundTreasureWithToken("DAI", fee);
-    }
-
-    /// @notice Swaps DAI for ETH
+    /// @notice Swaps DAI for Native currency
     /// @param amount Amount of DAI to swap to eth
-    /// @param ethAddress Address to send eths
+    /// @param nativeAddress Address to send eths
     /// @return Amount of eths sent
-    function sendDAIToETHAddress(uint256 amount, address ethAddress)
+    function sendDAIToNativeAddress(uint256 amount, address nativeAddress)
         external
         returns (uint256)
     {
@@ -127,17 +99,17 @@ contract BloomSwapper {
             newAmount,
             0,
             path,
-            ethAddress,
+            nativeAddress,
             block.timestamp
         );
         return amounts[1];
     }
 
-    /// @notice Swaps ETH for DAI
+    /// @notice Swaps Native currency for DAI
     /// @param daiAddress dai address to be sent the money
     /// @return Amount of DAI received
-    /// @dev ETH must be sent with the transaction in msg.value
-    function sendETHToDAIAddress(address daiAddress)
+    /// @dev Native currency must be sent with the transaction in msg.value
+    function sendNativeToDAIAddress(address daiAddress)
         external
         payable
         returns (uint256)
@@ -151,7 +123,7 @@ contract BloomSwapper {
             address(this).balance > fee,
             "Fee is greater than the amount sent"
         );
-        treasure.fundTreasureWithETH{value: fee}();
+        treasure.fundTreasureWithNativeCurrency{value: fee}();
         uint256[] memory amounts = router.swapExactETHForTokens{
             value: msg.value - fee
         }(0, path, daiAddress, block.timestamp);
@@ -228,27 +200,11 @@ contract BloomSwapper {
         return amounts[2];
     }
 
-    /** TETHER USDT CONTRACT FUNCTIONS */
-    /// @notice Sends USDC to another address
-    /// @param to The address to send USDC to
-    /// @param amount Amount to send
-    function sendUSDTTOAddress(address to, uint256 amount) public {
-        minimumAmount(amount);
-        uint256 fee = treasure.calculateFee(amount);
-        uint256 newAmount = amount - fee;
-        require(
-            usdt.transferFrom(msg.sender, address(this), amount),
-            "Transfer failed"
-        );
-        usdt.transfer(to, newAmount);
-        fundTreasureWithToken("USDT", fee);
-    }
-
     /// @notice Swaps ETH for USDT
     /// @param usdtAddress USDT address to be sent the money
     /// @return Amount of USDT received
-    /// @dev ETH must be sent with the transaction in msg.value
-    function sendETHToUSDTAddress(address usdtAddress)
+    /// @dev Native Currency must be sent with the transaction in msg.value
+    function sendNativeToUSDTAddress(address usdtAddress)
         external
         payable
         returns (uint256)
@@ -263,18 +219,18 @@ contract BloomSwapper {
             address(this).balance > fee,
             "Fee is greater than the amount sent"
         );
-        treasure.fundTreasureWithETH{value: fee}();
+        treasure.fundTreasureWithNativeCurrency{value: fee}();
         uint256[] memory amounts = router.swapExactETHForTokens{
             value: msg.value - fee
         }(0, path, usdtAddress, block.timestamp);
         return amounts[1];
     }
 
-    /// @notice Swaps USDT for ETH
-    /// @param ethAddress ETH address to be sent the money
+    /// @notice Swaps USDT for Native Currency of current blockchain
+    /// @param nativeAddress ETH address to be sent the money
     /// @param amount Amount of USDT to swap
-    /// @return Amount of ETH received
-    function sendUSDTToETHAddress(uint256 amount, address ethAddress)
+    /// @return Amount of native Currency received
+    function sendUSDTToNativeAddress(uint256 amount, address nativeAddress)
         external
         returns (uint256)
     {
@@ -299,7 +255,7 @@ contract BloomSwapper {
             newAmount,
             0,
             path,
-            ethAddress,
+            nativeAddress,
             block.timestamp
         );
         return amounts[1];
@@ -375,27 +331,11 @@ contract BloomSwapper {
         return amounts[2];
     }
 
-    /** USDC COIN CONTRACT FUNCTIONS */
-    /// @notice Sends USDC to another address
-    /// @param to The address to send USDC to
-    /// @param amount Amount to send
-    function sendUSDCToAddress(address to, uint256 amount) public {
-        minimumAmount(amount);
-        uint256 fee = treasure.calculateFee(amount);
-        uint256 newAmount = amount - fee;
-        require(
-            usdc.transferFrom(msg.sender, address(this), amount),
-            "Transfer failed"
-        );
-        usdc.transfer(to, newAmount);
-        fundTreasureWithToken("USDC", fee);
-    }
-
-    /// @notice Swaps ETH for USDC
+    /// @notice Swaps Native currency for USDC
     /// @return Amount of USDC received
     /// @param usdcAddress USDC address to be sent the money
-    /// @dev ETH must be sent with the transaction in msg.value
-    function sendETHToUSDCAddress(address usdcAddress)
+    /// @dev Native Currency must be sent with the transaction in msg.value
+    function sendNativeToUSDCAddress(address usdcAddress)
         external
         payable
         returns (uint256)
@@ -407,7 +347,7 @@ contract BloomSwapper {
         path[1] = USDC;
         uint256 fee = treasure.calculateFee(msg.value);
         uint256 amountToSwap = msg.value - fee;
-        treasure.fundTreasureWithETH{value: fee}();
+        treasure.fundTreasureWithNativeCurrency{value: fee}();
         uint256[] memory amounts = router.swapExactETHForTokens{
             value: amountToSwap
         }(0, path, usdcAddress, block.timestamp);
@@ -416,9 +356,9 @@ contract BloomSwapper {
 
     /// @notice Swaps USDC for ETH
     /// @param amount Amount of USDT to swap
-    /// @param ethAddress ETH address to be sent the money
-    /// @return Amount of ETH received
-    function sendUSDCToETHAddress(uint256 amount, address ethAddress)
+    /// @param nativeAddress ETH address to be sent the money
+    /// @return Amount of Native currency received
+    function sendUSDCToNativeAddress(uint256 amount, address nativeAddress)
         external
         returns (uint256)
     {
@@ -443,7 +383,7 @@ contract BloomSwapper {
             newAmount,
             0,
             path,
-            ethAddress,
+            nativeAddress,
             block.timestamp
         );
         return amounts[1];

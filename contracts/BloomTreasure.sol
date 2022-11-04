@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity 0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract BloomTreasure {
@@ -13,12 +13,12 @@ contract BloomTreasure {
         uint256 balance;
     }
     struct Treasure {
-        Token eth;
+        Token native;
         Token dai;
         Token usdt;
         Token usdc;
     }
-    string[] private tokens = ["ETH", "DAI", "USDC", "USDT"];
+    string[] private tokens = ["NATIVE", "DAI", "USDC", "USDT"];
     address[] private owners;
     uint256 private percentage = 100; // 1% in basis points
     Treasure treasure;
@@ -72,8 +72,8 @@ contract BloomTreasure {
         return (amount * percentage) / 10000;
     }
 
-    function fundTreasureWithETH() external payable {
-        treasure.eth.balance += msg.value;
+    function fundTreasureWithNativeCurrency() external payable {
+        treasure.native.balance += msg.value;
     }
 
     function updateInternalBalanceOfTokens() public {
@@ -82,8 +82,8 @@ contract BloomTreasure {
         treasure.usdt.balance = usdt.balanceOf(address(this));
     }
 
-    function getPublicBalanceOfETH() public view returns (uint256) {
-        return treasure.eth.balance;
+    function getPublicBalanceOfNativeCurrency() public view returns (uint256) {
+        return treasure.native.balance;
     }
 
     function getPublicBalanceOfDAI() public view returns (uint256) {
@@ -104,13 +104,13 @@ contract BloomTreasure {
         bool isOwner = false;
         isOwner = checkOwnership(owners, msg.sender);
         require(isOwner, "You are not an owner");
-        if (compareStrings(tokenToRetrieve, "ETH")) {
+        if (compareStrings(tokenToRetrieve, "NATIVE")) {
             require(
-                amountToRetrieve < treasure.eth.balance,
-                "Not enough ETH in the treasure"
+                amountToRetrieve < treasure.native.balance,
+                "Not enough Native Currency in the treasure"
             );
             payable(msg.sender).transfer(amountToRetrieve);
-            treasure.eth.balance -= amountToRetrieve;
+            treasure.native.balance -= amountToRetrieve;
         }
         if (compareStrings(tokenToRetrieve, "DAI")) {
             require(
