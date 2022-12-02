@@ -20,6 +20,7 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
 -   [SWAPPER 🔄](https://goerli.etherscan.io/address/0x63676f1Aaad4C5a9443Fb3bd1FEF6611F6A5E84E): 0x63676f1Aaad4C5a9443Fb3bd1FEF6611F6A5E84E
 -   [TREASURE 🤑](https://goerli.etherscan.io/address/0x0CDc2A86A61935E4AB920054Fd204a6bB713BDC4): 0x0CDc2A86A61935E4AB920054Fd204a6bB713BDC4
+-   [TRANSFERS 💸](https://goerli.etherscan.io/address/0xAc45bA539d2f01995A266475D6526395353d4357): 0xAc45bA539d2f01995A266475D6526395353d4357
 
 ### Last stable testnet contracts for MUMBAI 🟣
 
