@@ -29,7 +29,7 @@ contract BloomTreasure {
         address _usdc,
         address _usdt
     ) {
-        //Set an array of owners that can withdraw the balance
+        //Set an array of owners that can withdrawl the balance
         owners = _owners;
         DAI = _dai;
         dai = IERC20(DAI);
@@ -98,9 +98,10 @@ contract BloomTreasure {
         return treasure.usdc.balance;
     }
 
-    function withdraw(string memory tokenToRetrieve, uint256 amountToRetrieve)
-        public
-    {
+    function withdrawl(
+        string memory tokenToRetrieve,
+        uint256 amountToRetrieve
+    ) public {
         bool isOwner = false;
         isOwner = checkOwnership(owners, msg.sender);
         require(isOwner, "You are not an owner");
@@ -147,11 +148,10 @@ contract BloomTreasure {
         }
     }
 
-    function checkOwnership(address[] memory _owners, address sender)
-        internal
-        pure
-        returns (bool)
-    {
+    function checkOwnership(
+        address[] memory _owners,
+        address sender
+    ) internal pure returns (bool) {
         bool isOwner = false;
         for (uint256 j = 0; j < _owners.length; j++) {
             if (_owners[j] == sender) {
@@ -161,11 +161,10 @@ contract BloomTreasure {
         return isOwner;
     }
 
-    function compareStrings(string memory a, string memory b)
-        internal
-        pure
-        returns (bool)
-    {
+    function compareStrings(
+        string memory a,
+        string memory b
+    ) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) ==
             keccak256(abi.encodePacked((b))));
     }

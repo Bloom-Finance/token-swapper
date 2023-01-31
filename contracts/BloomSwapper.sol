@@ -70,8 +70,8 @@ contract BloomSwapper {
     /// @param nativeAddress Address to send eths
     /// @return Amount of eths sent
     function sendDAIToNativeAddress(
-        uint256 amount,
-        address nativeAddress
+        address nativeAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -128,8 +128,8 @@ contract BloomSwapper {
     /// @param usdtAddress usdt address to be sent the money
     /// @return Amount of USDT received
     function sendDAIToUSDTAddress(
-        uint256 amount,
-        address usdtAddress
+        address usdtAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -163,8 +163,8 @@ contract BloomSwapper {
     /// @param usdcAddress USDC address to be sent the money
     /// @return Amount of USDC received
     function sendDAIToUSDCAddress(
-        uint256 amount,
-        address usdcAddress
+        address usdcAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -222,8 +222,8 @@ contract BloomSwapper {
     /// @param amount Amount of USDT to swap
     /// @return Amount of native Currency received
     function sendUSDTToNativeAddress(
-        uint256 amount,
-        address nativeAddress
+        address nativeAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -257,8 +257,8 @@ contract BloomSwapper {
     /// @param daiAddress DAI address to be sent the money
     /// @return Amount of DAI received
     function sendUSDToDAIAddress(
-        uint256 amount,
-        address daiAddress
+        address daiAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -292,8 +292,8 @@ contract BloomSwapper {
     /// @param usdcAddress USDC address to be sent the money
     /// @return Amount of USDC received
     function sendUSDTToUSDCAddress(
-        uint256 amount,
-        address usdcAddress
+        address usdcAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -348,8 +348,8 @@ contract BloomSwapper {
     /// @param nativeAddress ETH address to be sent the money
     /// @return Amount of Native currency received
     function sendUSDCToNativeAddress(
-        uint256 amount,
-        address nativeAddress
+        address nativeAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -383,8 +383,8 @@ contract BloomSwapper {
     /// @param daiAddress DAI address to be sent the money
     /// @return Amount of DAI received
     function sendUSDCToDAIAddress(
-        uint256 amount,
-        address daiAddress
+        address daiAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
@@ -418,8 +418,8 @@ contract BloomSwapper {
     /// @param usdtAddress USDT Address to be sent the money
     /// @return Amount of USDT received
     function sendUSDCToUSDTAddress(
-        uint256 amount,
-        address usdtAddress
+        address usdtAddress,
+        uint256 amount
     ) external returns (uint256) {
         minimumAmount(amount);
         uint256 fee = treasure.calculateFee(amount);
