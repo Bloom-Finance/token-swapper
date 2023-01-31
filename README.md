@@ -18,15 +18,15 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
 ### Last stable testnet contracts for GOERLI ⚙️
 
--   [SWAPPER 🔄](https://goerli.etherscan.io/address/0x63676f1Aaad4C5a9443Fb3bd1FEF6611F6A5E84E): 0x63676f1Aaad4C5a9443Fb3bd1FEF6611F6A5E84E
--   [TREASURE 🤑](https://goerli.etherscan.io/address/0x0CDc2A86A61935E4AB920054Fd204a6bB713BDC4): 0x0CDc2A86A61935E4AB920054Fd204a6bB713BDC4
--   [TRANSFERS 💸](https://goerli.etherscan.io/address/0xAc45bA539d2f01995A266475D6526395353d4357): 0xAc45bA539d2f01995A266475D6526395353d4357
+-   [SWAPPER 🔄](https://goerli.etherscan.io/address/0x760ec0C1213261d9518e18AB48639D97C9A03646): 0x760ec0C1213261d9518e18AB48639D97C9A03646
+-   [TREASURE 🤑](https://goerli.etherscan.io/address/0xC1843CE3fE074F3c4427Ee9054a3e3810123AC1A): 0xC1843CE3fE074F3c4427Ee9054a3e3810123AC1A
+-   [TRANSFERS 💸](https://goerli.etherscan.io/address/0xA52266a2f0c31C50899298DC41c9fFa5752f938a): 0xA52266a2f0c31C50899298DC41c9fFa5752f938a
 
 ### Last stable testnet contracts for MUMBAI 🟣
 
--   [SWAPPER 🔄](https://mumbai.polygonscan.com/address/0x282f2593c1C7425C6bd582fb2AFEeA056f78f75B): 0x282f2593c1C7425C6bd582fb2AFEeA056f78f75B
--   [TREASURE 🤑](https://mumbai.polygonscan.com/address/0x130612d9359b9a51adf9bc4289c610782904bad1): 0x130612D9359b9A51adf9bC4289c610782904BAD1
--   [TRANSFERS 💸](https://mumbai.polygonscan.com/address/0xAfDa87fb56C155be167eD088cD54A3e70A5dEC73): 0xAfDa87fb56C155be167eD088cD54A3e70A5dEC73
+-   [SWAPPER 🔄](https://mumbai.polygonscan.com/address/0xf2Bc02967231C666e0956E8F2A205efe52406EC0): 0xf2Bc02967231C666e0956E8F2A205efe52406EC0
+-   [TREASURE 🤑](https://mumbai.polygonscan.com/address/0x78A27aeFaac1F7A7F1530E095F03CA773B233325): 0x78A27aeFaac1F7A7F1530E095F03CA773B233325
+-   [TRANSFERS 💸](https://mumbai.polygonscan.com/address/0xF1748e94300D8139A715Dc7804c26b2a6bF152D3): 0xF1748e94300D8139A715Dc7804c26b2a6bF152D3
 
 ## Ethereum 🌎
 
